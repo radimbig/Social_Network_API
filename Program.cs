@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+using Social_Network_API.Models;
 namespace Social_Network_API
 {
     public class Program
@@ -5,12 +7,12 @@ namespace Social_Network_API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            var logger = new Logger();
             // Add services to the container.
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
+            
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
@@ -22,13 +24,18 @@ namespace Social_Network_API
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
 
 
+
+
+            app.Use(async (HttpContext context, RequestDelegate next) =>
+            {
+                logger.AddCountOfRequest();
+                Console.WriteLine($"count of request:{logger.countOfRequests}");
+                await next.Invoke(context);
+            });
             app.MapControllers();
-
+            
             app.Run();
         }
     }
