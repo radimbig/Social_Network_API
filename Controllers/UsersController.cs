@@ -2,6 +2,7 @@
 using Social_Network_API.Entities;
 using System.ComponentModel;
 using Microsoft.AspNetCore.Http;
+using Social_Network_API.Models;
 
 
 namespace Social_Network_API.Controllers
@@ -12,7 +13,7 @@ namespace Social_Network_API.Controllers
     public class UsersController : ControllerBase
     {
         public static List<User> Users = new List<User>();
-
+        public Logger logger;
         [HttpPost]
         public IActionResult Post([FromForm] User user)
         {
@@ -20,9 +21,10 @@ namespace Social_Network_API.Controllers
             {
                 return new BadRequestResult();
             }
-
-            Users.Add(new User(user.Name, user.Email, user.Age, DateTime.Now));
-
+            var tempUser = new User(user.Name, user.Email, user.Age, DateTime.Now);
+            Users.Add(tempUser);
+            logger = (Logger)(HttpContext.Items["logger"]);
+            logger.AddUser(tempUser);
             return new JsonResult(Users.Last());
         }
         [Route("{id?}")]

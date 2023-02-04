@@ -32,6 +32,7 @@ namespace Social_Network_API
             {
                 logger.AddCountOfRequest();
                 Console.WriteLine($"count of request:{logger.countOfRequests}");
+                context.Items["logger"] = logger;
                 await next.Invoke(context);
             });
             app.MapControllers();

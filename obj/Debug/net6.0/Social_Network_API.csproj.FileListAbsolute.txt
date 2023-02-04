@@ -25,3 +25,4 @@ C:\Users\God\source\repos\Social_Network_API\obj\Debug\net6.0\refint\Social_Netw
 C:\Users\God\source\repos\Social_Network_API\obj\Debug\net6.0\Social_Network_API.pdb
 C:\Users\God\source\repos\Social_Network_API\obj\Debug\net6.0\Social_Network_API.genruntimeconfig.cache
 C:\Users\God\source\repos\Social_Network_API\obj\Debug\net6.0\ref\Social_Network_API.dll
+C:\Users\God\source\repos\Social_Network_API\bin\Debug\net6.0\Newtonsoft.Json.dll

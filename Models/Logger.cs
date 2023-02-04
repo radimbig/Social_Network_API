@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Mvc;
+using Social_Network_API.Entities;
 using System.Text;
-
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 namespace Social_Network_API.Models
 {
     public class Logger
     {
 
         private static FileStream LogStream;
-
+        private static FileStream UsersStream;
         private StreamReader Reader;
 
 
@@ -43,8 +46,20 @@ namespace Social_Network_API.Models
             {
                 LogStream.Write(Encoding.Default.GetBytes("0"));
             }
+            UsersStream = new FileStream("Database\\Users.txt", new FileStreamOptions
+            {
+                Access = FileAccess.ReadWrite,
+                Mode = FileMode.OpenOrCreate
+            });
 
-
+        }
+        public  void AddUser(User user)
+        {
+            UsersStream.Position = UsersStream.Length;
+            string jsonUser = Newtonsoft.Json.JsonConvert.SerializeObject(user) + "\n";
+            byte[] buffer = Encoding.Default.GetBytes(jsonUser);
+            UsersStream.Write(buffer);
+            UsersStream.Flush();
         }
         public void AddCountOfRequest()
         {
