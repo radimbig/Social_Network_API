@@ -1,19 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Social_Network_API.Entities;
-using System.ComponentModel;
+
 using Microsoft.AspNetCore.Http;
 using Social_Network_API.Models;
-
+using Social_Network_API.Database;
 
 namespace Social_Network_API.Controllers
 {
-
+    
     [Route("user")]
     [ApiController]
     public class UsersController : ControllerBase
     {
-        public static List<User> Users = new List<User>();
-        public Logger logger;
+        private readonly MyDBContext _context;
+        
+        
+
+        public UsersController(MyDBContext context)
+        {
+            _context = context;
+            
+        }
+
         [HttpPost]
         public IActionResult Post([FromForm] User user)
         {
@@ -21,28 +29,37 @@ namespace Social_Network_API.Controllers
             {
                 return new BadRequestResult();
             }
-            var tempUser = new User(user.Name, user.Email, user.Age, DateTime.Now);
-            Users.Add(tempUser);
-            logger = (Logger)(HttpContext.Items["logger"]);
-            logger.AddUser(tempUser);
-            return new JsonResult(Users.Last());
+
+            var tempUser = new User(user.Name, user.Email, user.Age, DateTime.Now,user.Password);
+            if (_context.Users.Any(e => e.Email == user.Email))
+            {
+                HttpContext.Response.StatusCode = 409;
+                return new JsonResult(new { description = "User with this email already exists"});
+            }
+
+            _context.Users.Add(tempUser);
+            _context.SaveChanges(); 
+            
+            return new JsonResult(tempUser);
         }
         [Route("{id?}")]
         [HttpGet]
-        public IActionResult Get([FromRoute] string id)
+        public IActionResult Get([FromRoute] int id)
         {
-            var tempUser = Users.FirstOrDefault(e => { return e.Id == id; });
-            if (tempUser == null)
+            if (!_context.Users.Any(e => e.Id == id))
             {
-                return new JsonResult(new { error = 404, description = $"Cant find user with {id} id" });
+                HttpContext.Response.StatusCode = 404;
+                return new JsonResult(new { description = $"Cant find user with {id} id" });
             }
-            return new JsonResult(tempUser);
+            var tempUser = _context.Users.Where(e =>e.Id == id);
+            
+            return new JsonResult(tempUser.ToArray().First());
         }
         [Route("count")]
         [HttpGet]
         public IActionResult Count()
         {
-            return new JsonResult(new { TotalUsersCount = Entities.User.countOfUsers });
+            return new JsonResult(new { TotalUsersCount = _context.Users.Count() });
         }
 
         [HttpGet]
@@ -55,16 +72,16 @@ namespace Social_Network_API.Controllers
             }
             if (count > 50)
             {
-                return new JsonResult(new { message = "count must be lower than 50!" });
+                return new JsonResult(new { description = "count must be lower than 50!" });
             }
             try
             {
-                return new JsonResult(Users.GetRange(index, count).ToArray());
+                return new JsonResult(_context.Users.Skip(index).Take(count).ToArray()) ;
             }
             catch
             {
                 Response.StatusCode = 404;
-                return new JsonResult(new { error = 404, message = "no users in that range" });
+                return new JsonResult(new { description = "no users in that range" });
             }
 
         }
@@ -72,17 +89,26 @@ namespace Social_Network_API.Controllers
 
         [Route("{id?}")]
         [HttpDelete]
-        public IActionResult Delete([FromRoute] string id)
+        public IActionResult Delete([FromRoute] int id)
         {
-            var tempUser = Users.FirstOrDefault(e => { return e.Id == id; });
 
-            if (tempUser == null)
+            if (!_context.Users.Any(e => e.Id == id))
             {
-                return new JsonResult(new { error = 404, description = $"Cant find user with {id} id" });
+                HttpContext.Response.StatusCode = 409;
+                return new JsonResult(new { description = $"no user with id{id}"});
             }
-            Users.Remove(tempUser);
+            _context.Users.Remove(_context.Users.Where(e=>e.Id == id).ToArray().First());
+            _context.SaveChanges();
             return StatusCode(200);
         }
 
     }
 }
+
+
+
+/*
+             
+            
+            
+ */
