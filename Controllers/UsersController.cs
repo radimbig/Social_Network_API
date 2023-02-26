@@ -22,26 +22,7 @@ namespace Social_Network_API.Controllers
             
         }
 
-        [HttpPost]
-        public IActionResult Post([FromForm] User user)
-        {
-            if (!ModelState.IsValid)
-            {
-                return new BadRequestResult();
-            }
-
-            var tempUser = new User(user.Name, user.Email, user.Age, DateTime.Now,user.Password);
-            if (_context.Users.Any(e => e.Email == user.Email))
-            {
-                HttpContext.Response.StatusCode = 409;
-                return new JsonResult(new { description = "User with this email already exists"});
-            }
-
-            _context.Users.Add(tempUser);
-            _context.SaveChanges(); 
-            
-            return new JsonResult(tempUser);
-        }
+        
         [Route("{id?}")]
         [HttpGet]
         public IActionResult Get([FromRoute] int id)

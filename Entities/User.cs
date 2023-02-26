@@ -21,6 +21,7 @@ namespace Social_Network_API.Entities {
         public string Name { get; set; } = string.Empty;
         [BindRequired]
         [MaxLength(320)]
+        [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
 
