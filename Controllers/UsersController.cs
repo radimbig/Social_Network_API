@@ -76,7 +76,7 @@ namespace Social_Network_API.Controllers
             }
             try
             {
-                return new JsonResult(_context.Users.Skip(index).Take(count).ToArray()) ;
+                return new JsonResult(_context.Users.OrderByDescending(e=>e.Id).Skip(index).Take(count).ToArray()) ;
             }
             catch
             {

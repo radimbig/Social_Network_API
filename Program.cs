@@ -2,9 +2,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Social_Network_API.Models;
-using System.Configuration;
+using Microsoft.Extensions.Configuration;
 using Social_Network_API.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Social_Network_API
 {
@@ -12,7 +15,9 @@ namespace Social_Network_API
     {
         public static void Main(string[] args)
         {
-            
+            IConfiguration config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
             var builder = WebApplication.CreateBuilder(args);
             var logger = new Logger();
             // Add services to the container.
@@ -22,10 +27,19 @@ namespace Social_Network_API
             string connectionString = "server=localhost;user=root;password=root;database=societydb;port=3306";
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<MyDBContext>(options => options.UseMySQL(connectionString));;
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new()
+                {
+                    ValidateLifetime = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("Jwt:Key")))
+                };
+            });
             
             var app = builder.Build();
-            
-            
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             
 
             // Configure the HTTP request pipeline.
