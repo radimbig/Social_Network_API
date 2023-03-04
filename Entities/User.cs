@@ -4,14 +4,18 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Serialization;
 using Social_Network_API.Enums;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Xml.Linq;
+using System.Text.Json;
+
 namespace Social_Network_API.Entities {
     public class User
     {
 
-        
+
 
         [BindNever]
-        
+
         public int Id { get; set; }
 
 
@@ -28,26 +32,56 @@ namespace Social_Network_API.Entities {
         [MinLength(6)]
         [MaxLength(64)]
         [JsonIgnore]
+        
         public string Password = string.Empty;
+
+
+        [BindNever]
+        [JsonIgnore]
+        [MaxLength(24)]
+        
+        public string Salt { get; set; }
+
         [BindRequired]
-        [Range(18,100)]
+        [Range(18, 100)]
         public int Age { get; set; }
         [JsonIgnore]
-        public UserRole Role = UserRole.User;
+        [BindNever]
+        public UserRole Role { get; set; }
         
         public long CreatedDate { get; set; }
-        public User(string name, string email, int age, DateTime createDate, string password)
+        public User(string name, string email, int age, DateTime createDate, string password, string salt)
         {
-            var sha256 = SHA256.Create();
-            byte[] buffer = Encoding.UTF8.GetBytes(password);
-            Password = Convert.ToBase64String(sha256.ComputeHash(buffer));
+            Password = password;
             Name = name;
             Email = email;
             Age = age;
-
             CreatedDate = createDate.ToUniversalTime().ToFileTimeUtc();
-            
+            Role = UserRole.User;
+            Salt = salt;
         }
-        public User() { }
+        public User() {
+            Role = UserRole.User;
+        }
+        public override string ToString()
+        {
+            string output = JsonSerializer.Serialize(this);
+            return output;
+        }
     }
 }
+
+
+/*
+
+using (var sha256 = SHA256.Create())
+{
+    byte[] buffer = Encoding.UTF8.GetBytes(password);
+    Password = Convert.ToBase64String(sha256.ComputeHash(buffer));
+    Name = name;
+    Email = email;
+    Age = age;
+    CreatedDate = createDate.ToUniversalTime().ToFileTimeUtc();
+}
+
+*/

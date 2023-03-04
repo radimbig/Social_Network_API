@@ -24,6 +24,7 @@ namespace Social_Network_API.Database
             modelBuilder.Entity<User>(e => e.Property(o => o.Password).HasColumnType("CHAR(64)"));
             modelBuilder.Entity<User>(e => e.Property(o => o.CreatedDate).HasColumnType("BIGINT").HasColumnName("CreatedDate"));
             modelBuilder.Entity<User>(e => e.Property(o => o.Role).HasColumnName("Role").HasConversion(new UserRoleConverter()).HasDefaultValue(UserRole.User));
+            modelBuilder.Entity<User>(e=>e.Property(o=>o.Salt).HasColumnName("Salt").HasColumnType("CHAR(24)"));
         }
 
 

@@ -8,10 +8,10 @@ namespace Social_Network_API.Entities
         [BindRequired]
         [MaxLength(320)]
         [EmailAddress]
-        public string? Email { get; set; }
+        public string Email { get; set; }
         [BindRequired]
         [MinLength(8)]
         [MaxLength(64)]
-        public string? Password { get; set; }
+        public string Password { get; set; }
     }
 }

@@ -26,13 +26,26 @@ namespace Social_Network_API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             string connectionString = "server=localhost;user=root;password=root;database=societydb;port=3306";
             builder.Services.AddSwaggerGen();
+            builder.Services.AddAuthorization();
+            builder.Services.AddAuthentication();
+            builder.Services.AddSingleton<IConfiguration>(config);
             builder.Services.AddDbContext<MyDBContext>(options => options.UseMySQL(connectionString));;
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
+                var tempkey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("Jwt:Key")));
+                // tempkey.KeySize = 256;
                 options.TokenValidationParameters = new()
                 {
+                    RequireExpirationTime = true,
+                    LifetimeValidator = (before, expires, token, parameters) =>
+                    {return expires > DateTime.UtcNow;},
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
                     ValidateLifetime = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("Jwt:Key")))
+                    ValidateIssuerSigningKey = true,
+                    /*ValidIssuer = config.GetValue<string>("Jwt:Issuer"),
+                    ValidAudience = config.GetValue<string>("Jwt:Audience"),*/
+                    IssuerSigningKey = tempkey
                 };
             });
             
@@ -40,7 +53,8 @@ namespace Social_Network_API
             app.UseAuthentication();
             app.UseAuthorization();
 
-            
+
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -61,7 +75,10 @@ namespace Social_Network_API
                 await next.Invoke(context);
             });
             app.MapControllers();
-            
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
             app.Run();
         }
     }
