@@ -11,6 +11,7 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using MediatR;
 using Social_Network_API.Commands.Users.CreateUser;
+using Social_Network_API.Users.Queries.IsUserExists;
 
 namespace Social_Network_API.Controllers
 {
@@ -57,7 +58,7 @@ namespace Social_Network_API.Controllers
         [Route("register")]
         [HttpPost]
         [HttpPost]
-        public IActionResult Register([FromForm] UserRegister user)
+        public async Task<IActionResult> Register([FromForm] UserRegister user)
         {
             //if (!ModelState.IsValid)
             //{
@@ -82,12 +83,16 @@ namespace Social_Network_API.Controllers
             //return new JsonResult(tempUser);
 
 
-            _mediator.Send( new CreateUserCommand()
+            if(await _mediator.Send(new IsUserExistsQuerie(user.Email)))
             {
-                Name = user.Name,
-                Age = user.Age,
-                Email = user.Email,
-                Password = user.Password
+                return BadRequest($"User with email:'{user.Email}' already exists");
+            }
+            await _mediator.Send(new CreateUserCommand()
+            {
+                    Name = user.Name,
+                    Age = user.Age,
+                    Email = user.Email,
+                    Password = user.Password
             });
             return Ok();
 

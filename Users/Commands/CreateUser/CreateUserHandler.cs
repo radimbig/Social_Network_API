@@ -31,7 +31,6 @@ namespace Social_Network_API.Commands.Users.CreateUser
 
             var tempUser = new User()
             {
-                Id = _dbcontext.Users.Count(),
                 Name = request.Name,
                 Age = request.Age,
                 CreatedDate = DateTime.Now.ToFileTime(),
