@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using static Org.BouncyCastle.Math.EC.ECCurve;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using MediatR;
+using Social_Network_API.Commands.Users.CreateUser;
 
 namespace Social_Network_API.Controllers
 {
@@ -18,14 +20,14 @@ namespace Social_Network_API.Controllers
     {
         private readonly MyDBContext _context;
         private readonly IConfiguration _config;
+        private readonly IMediator _mediator;
 
 
-
-        public AuthorizationController(MyDBContext context, IConfiguration config)
+        public AuthorizationController(MyDBContext context, IConfiguration config, IMediator mediator)
         {
             _context = context;
             _config = config;
-            
+            _mediator = mediator;
         }
 
 
@@ -57,27 +59,38 @@ namespace Social_Network_API.Controllers
         [HttpPost]
         public IActionResult Register([FromForm] UserRegister user)
         {
-            if (!ModelState.IsValid)
-            {
-                return new BadRequestResult();
-            }
-           
+            //if (!ModelState.IsValid)
+            //{
+            //    return new BadRequestResult();
+            //}
 
-            
-            
-            string salt = GenerateSalt();
-            string hash = HashPassword(user.Password, salt);
-            
-            if (_context.Users.Any(e => e.Email == user.Email))
-            {
-                HttpContext.Response.StatusCode = 409;
-                return new JsonResult(new { description = "User with this email already exists" });
-            }
-            var tempUser = new User(user.Name, user.Email, user.Age, DateTime.Now, hash, salt);
-            _context.Users.Add(tempUser);
-            _context.SaveChanges();
 
-            return new JsonResult(tempUser);
+
+
+            //string salt = GenerateSalt();
+            //string hash = HashPassword(user.Password, salt);
+
+            //if (_context.Users.Any(e => e.Email == user.Email))
+            //{
+            //    HttpContext.Response.StatusCode = 409;
+            //    return new JsonResult(new { description = "User with this email already exists" });
+            //}
+            //var tempUser = new User(user.Name, user.Email, user.Age, DateTime.Now, hash, salt);
+            //_context.Users.Add(tempUser);
+            //_context.SaveChanges();
+
+            //return new JsonResult(tempUser);
+
+
+            _mediator.Send( new CreateUserCommand()
+            {
+                Name = user.Name,
+                Age = user.Age,
+                Email = user.Email,
+                Password = user.Password
+            });
+            return Ok();
+
         }
 
         private User? Authenticate(UserLogin user)
@@ -124,7 +137,7 @@ namespace Social_Network_API.Controllers
 
             var token = new JwtSecurityToken(_config.GetValue<string>("Jwt:Issuer"),
                 _config.GetValue<string>("Jwt:Audience"),
-                claims, expires:DateTime.Now.AddMinutes(1),
+                claims, expires:DateTime.Now.AddDays(1),
                 signingCredentials:credentials
                 );
             

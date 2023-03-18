@@ -1,8 +1,6 @@
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 using Social_Network_API.Models;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using MediatR;
 using Social_Network_API.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -49,10 +47,11 @@ namespace Social_Network_API
                 };
             });
             
+            builder.Services.AddMediatR(typeof(Program));
             var app = builder.Build();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            
 
 
 
@@ -63,10 +62,10 @@ namespace Social_Network_API
                 app.UseSwaggerUI();
             }
            
+            
 
 
-
-
+            
             app.Use(async (HttpContext context, RequestDelegate next) =>
             {
                 logger.AddCountOfRequest();
@@ -77,7 +76,6 @@ namespace Social_Network_API
             app.MapControllers();
             app.UseCors(x => x
                 .AllowAnyOrigin()
-                .AllowAnyMethod()
                 .AllowAnyHeader());
             app.Run();
         }

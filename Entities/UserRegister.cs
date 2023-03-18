@@ -12,14 +12,14 @@ namespace Social_Network_API.Entities
         [BindRequired]
         [MinLength(3)]
         [MaxLength(50)]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
         [MinLength(6)]
         [MaxLength(64)]
         [JsonIgnore]
-        public string Password { get; set; }
+        public string Password { get; set; } = null!;
         [BindRequired]
         [MaxLength(320)]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = null!;
     }
 }

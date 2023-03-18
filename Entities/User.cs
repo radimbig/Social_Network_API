@@ -22,25 +22,25 @@ namespace Social_Network_API.Entities {
         [BindRequired]
         [MinLength(3)]
         [MaxLength(50)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; } = null!;
         [BindRequired]
         [MaxLength(320)]
         [EmailAddress]
-        public string Email { get; set; } = string.Empty;
+        public string Email { get; set; } = null!;
 
 
         [MinLength(6)]
         [MaxLength(64)]
         [JsonIgnore]
         
-        public string Password = string.Empty;
+        public string Password = null!;
 
 
         [BindNever]
         [JsonIgnore]
         [MaxLength(24)]
-        
-        public string Salt { get; set; }
+
+        public string Salt { get; set; } = null!;
 
         [BindRequired]
         [Range(18, 100)]
@@ -56,7 +56,7 @@ namespace Social_Network_API.Entities {
             Name = name;
             Email = email;
             Age = age;
-            CreatedDate = createDate.ToUniversalTime().ToFileTimeUtc();
+            CreatedDate = createDate.ToFileTime();
             Role = UserRole.User;
             Salt = salt;
         }
