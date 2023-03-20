@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Social_Network_API.Common.Exceptions
 {
-    public class NotFoundException : Exception
+    public class NoTokenForPairException:Exception
     {
-        public NotFoundException(object entity, object key)
-            : base($"Entity \"{(entity)}\" by ({key}) not found.") { }
+        public NoTokenForPairException(): base("")
+        {
+            
+        }
     }
 }

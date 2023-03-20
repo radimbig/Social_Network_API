@@ -7,6 +7,7 @@ using Social_Network_API.Enums;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Xml.Linq;
 using System.Text.Json;
+using Social_Network_API.Commands.Users.CreateUser;
 
 namespace Social_Network_API.Entities {
     public class User
@@ -63,6 +64,7 @@ namespace Social_Network_API.Entities {
         public User() {
             Role = UserRole.User;
         }
+       
         public override string ToString()
         {
             string output = JsonSerializer.Serialize(this);

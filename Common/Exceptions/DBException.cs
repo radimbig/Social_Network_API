@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Social_Network_API.Common.Exceptions
 {
-    public class NotFoundException : Exception
+    public class DBException:Exception
     {
-        public NotFoundException(object entity, object key)
-            : base($"Entity \"{(entity)}\" by ({key}) not found.") { }
+        public DBException() : base("Problems with database") { }
     }
 }

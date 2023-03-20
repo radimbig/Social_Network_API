@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Social_Network_API.Common.Exceptions
 {
-    public class NotFoundException : Exception
+    public class NoIdentityException:Exception
     {
-        public NotFoundException(object entity, object key)
-            : base($"Entity \"{(entity)}\" by ({key}) not found.") { }
+        public NoIdentityException() : base("No Identity in this context") { }
     }
 }

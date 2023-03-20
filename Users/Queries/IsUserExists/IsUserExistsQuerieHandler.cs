@@ -6,7 +6,7 @@ using Social_Network_API.Database;
 
 namespace Social_Network_API.Users.Queries.IsUserExists
 {
-    public class IsUserExistsQuerieHandler:IRequestHandler<IsUserExistsQuerie, bool>
+    public class IsUserExistsQuerieHandler:IRequestHandler<IsUserExistsQuery, bool>
     {
         MyDBContext _dbcontext;
 
@@ -14,9 +14,17 @@ namespace Social_Network_API.Users.Queries.IsUserExists
         {
             _dbcontext = dbcontext;
         }
-        public async Task<bool> Handle(IsUserExistsQuerie request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(IsUserExistsQuery request, CancellationToken cancellationToken)
         {
-            return await _dbcontext.Users.AnyAsync(user => user.Email == request.Email);
+            if(request.Email != null)
+            {
+                return await _dbcontext.Users.AnyAsync(user => user.Email == request.Email);
+            }
+            if(request.Id != null)
+            {
+                return await _dbcontext.Users.AnyAsync(user => user.Id == request.Id);
+            }
+            return false;
         }
     }
 }

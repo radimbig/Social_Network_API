@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using FluentValidation;
+using Social_Network_API.Common.Behaviors;
 
 namespace Social_Network_API
 {
@@ -48,6 +50,8 @@ namespace Social_Network_API
             });
             
             builder.Services.AddMediatR(typeof(Program));
+            builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             var app = builder.Build();
             app.UseAuthentication();
             app.UseAuthorization();

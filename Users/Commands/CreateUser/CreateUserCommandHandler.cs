@@ -11,11 +11,11 @@ using Social_Network_API.Common.Exceptions;
 
 namespace Social_Network_API.Commands.Users.CreateUser
 {
-    public class CreateUserHandler:IRequestHandler<CreateUserCommand, int>
+    public class CreateUserCommandHandler:IRequestHandler<CreateUserCommand, int>
     {
         MyDBContext _dbcontext;
 
-        public CreateUserHandler(MyDBContext dbcontext)
+        public CreateUserCommandHandler(MyDBContext dbcontext)
         {
             _dbcontext = dbcontext;
         }

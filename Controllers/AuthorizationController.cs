@@ -12,6 +12,8 @@ using System.IdentityModel.Tokens.Jwt;
 using MediatR;
 using Social_Network_API.Commands.Users.CreateUser;
 using Social_Network_API.Users.Queries.IsUserExists;
+using Social_Network_API.Auth.Login.IsLoginPairCorrect;
+using Social_Network_API.Auth.Login.GetToken;
 
 namespace Social_Network_API.Controllers
 {
@@ -34,14 +36,8 @@ namespace Social_Network_API.Controllers
 
 
 
-
-
-        [AllowAnonymous]
-        [Route("login")]
-        [HttpPost]
-        public IActionResult Login([FromBody] UserLogin userLogin)
-        {
-            if (!ModelState.IsValid)
+        /*
+          if (!ModelState.IsValid)
             {
                 return new BadRequestResult();
             }
@@ -53,37 +49,27 @@ namespace Social_Network_API.Controllers
                 return Ok(token);
             }
             return NotFound($"No user with email:{userLogin.Email} and password:{userLogin.Password}");
+         */
+
+        [AllowAnonymous]
+        [Route("login")]
+        [HttpPost]
+        public async Task<IActionResult> Login([FromBody] UserLogin userLogin)
+        {
+            if(!await _mediator.Send(new IsLoginPairCorrectQuery(userLogin))){
+                return BadRequest($"No user with email:{userLogin.Email} and password:{userLogin.Password}");
+            }
+            string token = await _mediator.Send(new GetTokenQuery(userLogin));
+            return Ok(token);
         }
         [AllowAnonymous]
         [Route("register")]
         [HttpPost]
-        [HttpPost]
+        
         public async Task<IActionResult> Register([FromForm] UserRegister user)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return new BadRequestResult();
-            //}
 
-
-
-
-            //string salt = GenerateSalt();
-            //string hash = HashPassword(user.Password, salt);
-
-            //if (_context.Users.Any(e => e.Email == user.Email))
-            //{
-            //    HttpContext.Response.StatusCode = 409;
-            //    return new JsonResult(new { description = "User with this email already exists" });
-            //}
-            //var tempUser = new User(user.Name, user.Email, user.Age, DateTime.Now, hash, salt);
-            //_context.Users.Add(tempUser);
-            //_context.SaveChanges();
-
-            //return new JsonResult(tempUser);
-
-
-            if(await _mediator.Send(new IsUserExistsQuerie(user.Email)))
+            if(await _mediator.Send(new IsUserExistsQuery(user.Email)))
             {
                 return BadRequest($"User with email:'{user.Email}' already exists");
             }
@@ -149,16 +135,7 @@ namespace Social_Network_API.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private string GenerateSalt()
-        {
-            // Generate a random salt value using a cryptographic random number generator
-            byte[] saltBytes = new byte[16];
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                rng.GetBytes(saltBytes);
-            }
-            return Convert.ToBase64String(saltBytes);
-        }
+        
         private string HashPassword(string password, string salt)
         {
             // Combine the password and salt values

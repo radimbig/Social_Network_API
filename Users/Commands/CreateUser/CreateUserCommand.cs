@@ -1,10 +1,5 @@
 ﻿using MediatR;
 using Social_Network_API.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Social_Network_API.Commands.Users.CreateUser
 {
@@ -16,6 +11,13 @@ namespace Social_Network_API.Commands.Users.CreateUser
         public string Password { get; set; } = null!;
         public int Age { get; set; }
 
-        
+        public CreateUserCommand() { }
+        public CreateUserCommand(UserRegister user)
+        {
+            Name = user.Name;
+            Age = user.Age;
+            Email = user.Email;
+            Password = user.Password;
+        }
     }
 }
