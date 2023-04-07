@@ -7,6 +7,7 @@ using Social_Network_API.Database;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Social_Network_API.Enums;
+using Social_Network_API.Common.Exceptions;
 
 namespace Social_Network_API.Controllers
 {
@@ -87,7 +88,7 @@ namespace Social_Network_API.Controllers
         [HttpGet]
         public IActionResult Count()
         {
-            return new JsonResult(new { TotalUsersCount = _context.Users.Count() });
+            throw new DBException();
         }
 
         [HttpGet]

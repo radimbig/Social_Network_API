@@ -3,9 +3,9 @@
 
 namespace Social_Network_API.Common.Exceptions
 {
-    interface ICustomException
+    public interface ICustomException
     {
         public string View { get;}
-        public Exception Origin { get;}
+        public int StatusCode { get;}
     }
 }

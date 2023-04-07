@@ -29,21 +29,16 @@ namespace Social_Network_API.Common.Middlewares
 
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            var code = HttpStatusCode.InternalServerError;
-            var result = string.Empty;
-            switch (exception)
+            var code = StatusCodes.Status500InternalServerError;
+            string result = string.Empty;
+            if(exception is ICustomException customException)
             {
-                case ValidationException validationException:
-                    code = HttpStatusCode.BadRequest;
-                    result = JsonSerializer.Serialize(validationException.Errors);
-                    break;
-                case NotFoundException:
-                    code = HttpStatusCode.NotFound;
-                    break;
+                code = customException.StatusCode;
+                result = JsonSerializer.Serialize(new { error=customException.View });
             }
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)code;
-
+            context.Response.StatusCode = code;
+            
             if (result == string.Empty)
             {
                 result = JsonSerializer.Serialize(new { error = exception.Message });
