@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using FluentValidation;
 using Social_Network_API.Common.Behaviors;
+using Social_Network_API.Common.Middlewares;
 
 namespace Social_Network_API
 {
@@ -23,8 +24,12 @@ namespace Social_Network_API
             // Add services to the container.
             
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            
+            // YOUR CONNECTION STRING FOR DB
             string connectionString = "server=localhost;user=root;password=root;database=societydb;port=3306";
+            
+
+            
             builder.Services.AddSwaggerGen();
             builder.Services.AddAuthorization();
             builder.Services.AddAuthentication();
@@ -53,6 +58,7 @@ namespace Social_Network_API
             builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             var app = builder.Build();
+            app.UseMiddleware<CustomExceptionHandlerMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
             
@@ -81,6 +87,7 @@ namespace Social_Network_API
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyHeader());
+            
             app.Run();
         }
     }

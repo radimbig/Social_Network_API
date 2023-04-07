@@ -8,7 +8,10 @@ namespace Social_Network_API.Common.Exceptions
 {
     public class AlreadyExistException : Exception
     {
-        public AlreadyExistException(object entity):base($"This {entity} is already exists") { }
+        public object exceptionCause;
+        public AlreadyExistException(object entity):base($"This {entity} is already exists") {
+        exceptionCause = entity;
+        }
         
     }
 }
