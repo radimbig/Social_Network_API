@@ -8,6 +8,12 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Social_Network_API.Enums;
 using Social_Network_API.Common.Exceptions;
+using MediatR;
+using Social_Network_API.Users.Queries.GetUsersCount;
+using Social_Network_API.Users.Queries.GetUsers;
+using Social_Network_API.Users.Queries.GetUserVm;
+using Social_Network_API.Users.Queries.GetUser;
+using Social_Network_API.Users.Commands.DeleteUser;
 
 namespace Social_Network_API.Controllers
 {
@@ -19,124 +25,59 @@ namespace Social_Network_API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly MyDBContext _context;
+        
+        private readonly IMediator _mediator;
         
         
 
-        public UsersController(MyDBContext context)
-        {
-            _context = context;
-            
+        public UsersController(IMediator mediator)
+        {    
+            _mediator = mediator;
         }
 
-        private User? GetCurrentUser()
-        {
-
-            ClaimsIdentity? identity = HttpContext.User.Identity as ClaimsIdentity;
-            
-            if (identity != null)
-            {
-
-                var userClaims = identity.Claims;
-                int idToSearch = Convert.ToInt32(userClaims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
-                
-
-                if(!_context.Users.Any(x => x.Id == idToSearch))
-                {
-                    return null;
-                }
-                User? temp = _context.Users.Where(x => x.Id == idToSearch).ToArray().First();
-                if(temp != null)
-                {
-                    return temp;
-                }
-                
-            }
-            return null;
-        }
+        
         [Route("me")]
         [Authorize]
-        public IActionResult GetMe()
+        public async Task<IActionResult> GetMe()
         {
-
-            User? response = GetCurrentUser();
-            if(response!= null)
-            {
-                return new JsonResult(response);
-            }
-            return new StatusCodeResult(500);
-            
+            return Ok(await _mediator.Send(new GetUserVmQuery(this.HttpContext)));
         }
-
 
         [AllowAnonymous]
         [Route("{id?}")]
         [HttpGet]
-        public IActionResult Get([FromRoute] int id)
+        public async Task<IActionResult> Get([FromRoute] int id)
         {
-            if (!_context.Users.Any(e => e.Id == id))
-            {
-                HttpContext.Response.StatusCode = 404;
-                return new JsonResult(new { description = $"Cant find user with {id} id" });
-            }
-            var tempUser = _context.Users.Where(e =>e.Id == id);
-            
-            return new JsonResult(tempUser.ToArray().First());
+            return (Ok(await _mediator.Send(new GetUserVmQuery(id))));
         }
         [AllowAnonymous]
         [Route("count")]
         [HttpGet]
-        public IActionResult Count()
+        public async Task<IActionResult> Count()
         {
-            throw new DBException();
+            return Ok(await _mediator.Send(new GetUsersCountQuery()));
         }
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult GetList([FromQuery] int index, int count)
+        public async Task<IActionResult> GetList([FromQuery] int index, int count)
         {
-            if(index <0 || count < 0)
-            {
-                return BadRequest();
-            }
-            if (index == 0 && count == 0)
-            {
-                return BadRequest();
-            }
-            if (count > 50)
-            {
-                return new JsonResult(new { description = "count must be lower than 50!" });
-            }
-            try
-            {
-                return new JsonResult(_context.Users.OrderByDescending(e=>e.Id).Skip(index).Take(count).ToArray()) ;
-            }
-            catch
-            {
-                Response.StatusCode = 404;
-                return new JsonResult(new { description = "no users in that range" });
-            }
-
+            return Ok(await _mediator.Send(new GetUsersQuery(count, index)));
         }
 
         [Authorize]
         
         [Route("{id?}")]
         [HttpDelete]
-        public IActionResult Delete([FromRoute] int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            if(GetCurrentUser().Role != UserRole.Admin)
+            
+            if((await _mediator.Send(new GetUserQuery(this.HttpContext))).Role != UserRole.Admin)
             {
-                return StatusCode(403);
+                throw new NoPermissionException();
             }
-            if (!_context.Users.Any(e => e.Id == id))
-            {
-                HttpContext.Response.StatusCode = 409;
-                return new JsonResult(new { description = $"no user with id {id}"});
-            }
-            _context.Users.Remove(_context.Users.Where(e=>e.Id == id).ToArray().First());
-            _context.SaveChanges();
-            return StatusCode(200);
+            await _mediator.Send(new DeleteUserCommand(id));
+            return Ok();
         }
 
     }

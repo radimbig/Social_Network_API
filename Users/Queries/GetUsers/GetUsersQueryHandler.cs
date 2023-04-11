@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Social_Network_API.Database;
 using Social_Network_API.Entities;
-using Social_Network_API.Users.Queries.GetUser;
+using Social_Network_API.Users.Queries.GetUserVm;
 using System;
 using System.Collections.Generic;
 using System.Linq;

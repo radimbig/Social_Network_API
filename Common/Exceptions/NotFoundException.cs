@@ -6,9 +6,14 @@ using System.Threading.Tasks;
 
 namespace Social_Network_API.Common.Exceptions
 {
-    public class NotFoundException : Exception
+    public class NotFoundException : Exception, ICustomException
     {
-        public NotFoundException(object entity, object key)
-            : base($"Entity \"{(entity)}\" by ({key}) not found.") { }
+        public string View { get; }
+        public NotFoundException(string type, object key): base($"{type} with id {key} not founded")
+        {
+            View = $"{type} with id {key} not found";
+        }
+
+        public int StatusCode => StatusCodes.Status404NotFound;
     }
 }

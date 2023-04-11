@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 
 namespace Social_Network_API.Common.Exceptions
 {
-    public class AlreadyExistException : Exception
+    public class AlreadyExistException : Exception, ICustomException
     {
         public object exceptionCause;
         public AlreadyExistException(object entity):base($"This {entity} is already exists") {
         exceptionCause = entity;
         }
-        
+
+        public string View => $"";
+
+        public int StatusCode => throw new NotImplementedException();
     }
 }

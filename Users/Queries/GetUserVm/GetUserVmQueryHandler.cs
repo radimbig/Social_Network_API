@@ -7,26 +7,26 @@ using Social_Network_API.Entities;
 using System.Security.Claims;
 using System.Security.Principal;
 
-namespace Social_Network_API.Users.Queries.GetUser
+namespace Social_Network_API.Users.Queries.GetUserVm
 {
-    public class GetUserQueryHandler:IRequestHandler<GetUserQuery, UserVm>
+    public class GetUserVmQueryHandler:IRequestHandler<GetUserVmQuery, UserVm>
     {
         private readonly IMediator _mediator;
         private readonly MyDBContext _context;
 
-        public GetUserQueryHandler(IMediator mediator, MyDBContext context)
+        public GetUserVmQueryHandler(IMediator mediator, MyDBContext context)
         {
             _mediator = mediator;
             _context = context;
         }
 
-        public async Task<UserVm> Handle(GetUserQuery request, CancellationToken cancellationToken)
+        public async Task<UserVm> Handle(GetUserVmQuery request, CancellationToken cancellationToken)
         {
             if(request.Email != null)
             {
                if(!await _context.Users.AnyAsync(user=>user.Email == request.Email))
                 {
-                    throw new NotFoundException(request, request.Email);
+                    throw new NotFoundException("user", request.Email);
                 }
                 var response =  await _context.Users.Where(user => user.Email == request.Email).FirstAsync();
                 if(response != null)
@@ -46,7 +46,7 @@ namespace Social_Network_API.Users.Queries.GetUser
                     int idToSearch = Convert.ToInt32(userClaims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
                     if (!await _context.Users.AnyAsync(user=>user.Id == idToSearch))
                     {
-                        throw new NotFoundException(userClaims, idToSearch);
+                        throw new NotFoundException("user", idToSearch);
                     }
                     var resultFromDb = await _context.Users.FirstOrDefaultAsync(user=>user.Id == idToSearch);
                     if(resultFromDb != null)
@@ -61,7 +61,7 @@ namespace Social_Network_API.Users.Queries.GetUser
             {
                 if(!await _context.Users.AnyAsync(user => user.Id == request.Id))
                 {
-                    throw new NotFoundException(new User(), request.Id);
+                    throw new NotFoundException("user", request.Id);
                 }
                 var dbResponse = await _context.Users.FirstOrDefaultAsync(user => user.Id == request.Id);
                 if(dbResponse != null)

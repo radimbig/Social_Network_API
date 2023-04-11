@@ -1,6 +1,6 @@
 ﻿using Social_Network_API.Entities;
 
-namespace Social_Network_API.Users.Queries.GetUser
+namespace Social_Network_API.Users.Queries.GetUserVm
 {
     public class UserVm
     {

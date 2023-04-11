@@ -5,7 +5,7 @@ using System.Text.Json;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Social_Network_API.Common.Exceptions;
-
+using Microsoft.EntityFrameworkCore;
 namespace Social_Network_API.Common.Middlewares
 {
     public class CustomExceptionHandlerMiddleware
@@ -35,6 +35,11 @@ namespace Social_Network_API.Common.Middlewares
             {
                 code = customException.StatusCode;
                 result = JsonSerializer.Serialize(new { error=customException.View });
+            }   
+            if(exception is ValidationException validationException)
+            {
+                code = StatusCodes.Status400BadRequest;
+                result = JsonSerializer.Serialize(validationException.Errors);
             }
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = code;

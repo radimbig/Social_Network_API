@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Social_Network_API.Users.Queries.GetUser;
+using Social_Network_API.Users.Queries.GetUserVm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
