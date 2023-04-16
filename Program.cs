@@ -76,13 +76,7 @@ namespace Social_Network_API
 
 
             
-            app.Use(async (HttpContext context, RequestDelegate next) =>
-            {
-                logger.AddCountOfRequest();
-                Console.WriteLine($"count of request:{logger.countOfRequests}");
-                
-                await next.Invoke(context);
-            });
+            
             app.MapControllers();
             app.UseCors(x => x
                 .AllowAnyOrigin()

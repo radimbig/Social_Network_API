@@ -14,8 +14,10 @@ namespace Social_Network_API.Database
             
         }
         public DbSet<User> Users { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>().HasKey(x => x.Id);
             modelBuilder.Entity<User>(e=>e.Property(o =>o.Age).HasColumnType("tinyint").HasConversion(
             v => (byte)v,
             v => (int)v));
@@ -25,6 +27,19 @@ namespace Social_Network_API.Database
             modelBuilder.Entity<User>(e => e.Property(o => o.CreatedDate).HasColumnType("BIGINT").HasColumnName("CreatedDate"));
             modelBuilder.Entity<User>(e => e.Property(o => o.Role).HasColumnName("Role").HasConversion(new UserRoleConverter()).HasDefaultValue(UserRole.User));
             modelBuilder.Entity<User>(e=>e.Property(o=>o.Salt).HasColumnName("Salt").HasColumnType("CHAR(24)"));
+            
+            
+            // Subscription relations
+            modelBuilder.Entity<User>().HasMany(u => u.Followers).WithOne(s => s.Following).HasForeignKey(u => u.FollowingId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.Following).WithOne(s => s.Follower).HasForeignKey(u => u.FollowerId).OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<Subscription>().HasKey(x => x.Id);
+            modelBuilder.Entity<Subscription>().ToTable("subscriptions");
+            modelBuilder.Entity<Subscription>().HasOne(s => s.Follower).WithMany(u => u.Following).HasForeignKey(s => s.FollowerId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Subscription>().HasOne(s => s.Following).WithMany(u => u.Followers).HasForeignKey(s => s.FollowingId).OnDelete(DeleteBehavior.Cascade);
+
+
+
         }
 
 

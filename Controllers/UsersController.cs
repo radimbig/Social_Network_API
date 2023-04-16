@@ -9,33 +9,25 @@ using System.Security.Claims;
 using Social_Network_API.Enums;
 using Social_Network_API.Common.Exceptions;
 using MediatR;
-using Social_Network_API.Users.Queries.GetUsersCount;
-using Social_Network_API.Users.Queries.GetUsers;
-using Social_Network_API.Users.Queries.GetUserVm;
-using Social_Network_API.Users.Queries.GetUser;
-using Social_Network_API.Users.Commands.DeleteUser;
+using Social_Network_API.Manipulations.Users.Queries.GetUserVm;
+using Social_Network_API.Manipulations.Users.Queries.GetUsersCount;
+using Social_Network_API.Manipulations.Users.Queries.GetUsers;
+using Social_Network_API.Manipulations.Users.Commands.DeleteUser;
+using Social_Network_API.Manipulations.Users.Queries.GetUser;
 
 namespace Social_Network_API.Controllers
 {
-
-
-    
-    
     [Route("user")]
     [ApiController]
     public class UsersController : ControllerBase
     {
-        
         private readonly IMediator _mediator;
-        
-        
 
         public UsersController(IMediator mediator)
-        {    
+        {
             _mediator = mediator;
         }
 
-        
         [Route("me")]
         [Authorize]
         public async Task<IActionResult> GetMe()
@@ -50,6 +42,7 @@ namespace Social_Network_API.Controllers
         {
             return (Ok(await _mediator.Send(new GetUserVmQuery(id))));
         }
+
         [AllowAnonymous]
         [Route("count")]
         [HttpGet]
@@ -66,20 +59,17 @@ namespace Social_Network_API.Controllers
         }
 
         [Authorize]
-        
         [Route("{id?}")]
         [HttpDelete]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            
-            if((await _mediator.Send(new GetUserQuery(this.HttpContext))).Role != UserRole.Admin)
+            if ((await _mediator.Send(new GetUserQuery(this.HttpContext))).Role != UserRole.Admin)
             {
                 throw new NoPermissionException();
             }
             await _mediator.Send(new DeleteUserCommand(id));
             return Ok();
         }
-
     }
 }
 
