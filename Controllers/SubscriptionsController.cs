@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Social_Network_API.Manipulations.Subscriptions.Commands.CreateSubscription;
 using Social_Network_API.Manipulations.Subscriptions.Commands.DeleteSubscription;
+using Social_Network_API.Manipulations.Subscriptions.Queries.GetFriends;
 using Social_Network_API.Manipulations.Subscriptions.Queries.GetSubscriptions;
 using Social_Network_API.Manipulations.Users.Queries.GetUser;
 
@@ -21,7 +22,6 @@ namespace Social_Network_API.Controllers
             _mediator = mediator;
         }
 
-       
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Get()
@@ -36,7 +36,6 @@ namespace Social_Network_API.Controllers
             return Ok(await _mediator.Send(new GetSubscriptionsQuery(id)));
         }
 
-       
         [Authorize]
         [HttpPost("{id}")]
         public async Task<IActionResult> Post(int id)
@@ -46,7 +45,6 @@ namespace Social_Network_API.Controllers
             return Ok();
         }
 
-        
         [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
@@ -54,6 +52,15 @@ namespace Social_Network_API.Controllers
             var requester = await _mediator.Send(new GetUserQuery(HttpContext));
             await _mediator.Send(new DeleteSubscriptionCommand(requester.Id, id));
             return Ok();
+        }
+
+        [Authorize]
+        [HttpGet("friends")]
+        // friends are users that you follow and they follow you back
+        public async Task<IActionResult> GetFriends()
+        {
+            var requester = await _mediator.Send(new GetUserQuery(this.HttpContext));
+            return Ok((await _mediator.Send(new GetFriendsQuery(requester.Id))));
         }
     }
 }

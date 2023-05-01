@@ -39,7 +39,7 @@ namespace Social_Network_API.Controllers
         [AllowAnonymous]
         [Route("register")]
         [HttpPost]
-        public async Task<IActionResult> Register([FromForm] UserRegister user)
+        public async Task<IActionResult> Register([FromBody] UserRegister user)
         {
             if (await _mediator.Send(new IsUserExistsQuery(user.Email)))
             {
