@@ -26,7 +26,6 @@ namespace Social_Network_API.Entities
         public User(
             string name,
             string email,
-            int age,
             DateTime createDate,
             string password,
             string salt
@@ -35,7 +34,6 @@ namespace Social_Network_API.Entities
             Password = password;
             Name = name;
             Email = email;
-
             CreatedDate = createDate.ToFileTime();
             Role = UserRole.User;
             Salt = salt;
