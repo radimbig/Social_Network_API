@@ -1,13 +1,21 @@
 ﻿using MediatR;
 using ImageMagick;
+using Social_Network_API.Manipulations.Users.Queries.GetUser;
+using Social_Network_API.Manipulations.Database.SaveChanges;
 
 namespace Social_Network_API.Manipulations.Users.Commands.AddUserAvatar
 {
-    public class AddUserAvatarCommandHandler : IRequestHandler<AddUserAvatarCommand, bool>
+    public class AddUserAvatarCommandHandler : IRequestHandler<AddUserAvatarCommand>
     {
         private readonly string RelativePathForImages = "/StaticFiles/Avatars/";
+        private readonly IMediator _mediator;
 
-        public async Task<bool> Handle(
+        public AddUserAvatarCommandHandler(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
+        public async Task<Unit> Handle(
             AddUserAvatarCommand request,
             CancellationToken cancellationToken
         )
@@ -30,7 +38,10 @@ namespace Social_Network_API.Manipulations.Users.Commands.AddUserAvatar
                         + ".jpg"
                 );
             }
-            return true;
+            var target = await _mediator.Send(new GetUserQuery(request.TargetId));
+            target.HasAvatar = true;
+            await _mediator.Send(new SaveChangesQuery());
+            return Unit.Value;
         }
     }
 }

@@ -1,7 +1,6 @@
 using Social_Network_API.Enums;
 using System.Text.Json;
 
-
 namespace Social_Network_API.Entities
 {
     public class User
@@ -14,9 +13,8 @@ namespace Social_Network_API.Entities
 
         public string Password = null!;
 
+        public bool HasAvatar = false;
         public string Salt { get; set; } = null!;
-
-        public int Age { get; set; }
 
         public UserRole Role { get; set; }
 
@@ -37,7 +35,7 @@ namespace Social_Network_API.Entities
             Password = password;
             Name = name;
             Email = email;
-            Age = age;
+
             CreatedDate = createDate.ToFileTime();
             Role = UserRole.User;
             Salt = salt;

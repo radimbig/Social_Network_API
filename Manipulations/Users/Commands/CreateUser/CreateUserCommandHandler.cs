@@ -32,7 +32,6 @@ namespace Social_Network_API.Manipulations.Users.Commands.CreateUser
             var tempUser = new User()
             {
                 Name = request.Name,
-                Age = request.Age,
                 CreatedDate = DateTime.Now.ToFileTime(),
                 Email = request.Email,
                 Password = hash,

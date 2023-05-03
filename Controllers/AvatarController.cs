@@ -16,7 +16,6 @@ namespace Social_Network_API.Controllers
         {
             _mediator = mediator;
         }
-
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> PostAvatar(IFormFile avatar)

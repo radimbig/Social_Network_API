@@ -1,14 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Social_Network_API.Database;
-using Social_Network_API.Entities;
 using Social_Network_API.Manipulations.Users.Queries.GetUserVm;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Social_Network_API.Manipulations.Users.Queries.GetUsers
 {

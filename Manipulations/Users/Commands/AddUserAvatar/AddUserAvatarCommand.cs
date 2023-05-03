@@ -2,7 +2,7 @@
 
 namespace Social_Network_API.Manipulations.Users.Commands.AddUserAvatar
 {
-    public class AddUserAvatarCommand : IRequest<bool>
+    public class AddUserAvatarCommand : IRequest
     {
         public int TargetId;
         public IFormFile Avatar { get; set; }

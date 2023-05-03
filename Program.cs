@@ -21,7 +21,7 @@ namespace Social_Network_API
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
             var builder = WebApplication.CreateBuilder(args);
-            
+
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -29,8 +29,7 @@ namespace Social_Network_API
             // YOUR CONNECTION STRING FOR DB
             string connectionString =
                 "server=localhost;user=root;password=root;database=societydb;port=3306";
-            
-            builder.Services.AddSwaggerGen();
+
             builder.Services.AddAuthorization();
             builder.Services.AddAuthentication();
             builder.Services.AddSingleton(config);
@@ -67,30 +66,25 @@ namespace Social_Network_API
                 typeof(IPipelineBehavior<,>),
                 typeof(ValidationBehavior<,>)
             );
+            builder.Services.AddSwaggerGen();
             var app = builder.Build();
+
             app.UseStaticFiles(
-               new StaticFileOptions
-               {
-                   FileProvider = new PhysicalFileProvider(
-                       Path.Combine(builder.Environment.ContentRootPath, "StaticFiles")
-                   ),
-                   RequestPath = "/files"
-               }
-           );
+                new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        Path.Combine(builder.Environment.ContentRootPath, "StaticFiles")
+                    ),
+                    RequestPath = "/files"
+                }
+            );
             app.UseMiddleware<CustomExceptionHandlerMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
             app.MapControllers();
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader());
-           
+
             app.Run();
         }
     }
