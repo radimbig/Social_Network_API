@@ -1,18 +1,20 @@
 ﻿using MediatR;
 using ImageMagick;
-using Social_Network_API.Manipulations.Users.Queries.GetUser;
-using Social_Network_API.Manipulations.Database.SaveChanges;
+using Social_Network_API.Common.Exceptions;
+using Social_Network_API.Database;
+using Microsoft.EntityFrameworkCore;
+using Social_Network_API.Entities;
 
 namespace Social_Network_API.Manipulations.Users.Commands.AddUserAvatar
 {
     public class AddUserAvatarCommandHandler : IRequestHandler<AddUserAvatarCommand>
     {
         private readonly string RelativePathForImages = "/StaticFiles/Avatars/";
-        private readonly IMediator _mediator;
 
-        public AddUserAvatarCommandHandler(IMediator mediator)
+        private readonly MyDBContext _dbContext;
+        public AddUserAvatarCommandHandler(MyDBContext dbContext)
         {
-            _mediator = mediator;
+            _dbContext = dbContext;
         }
 
         public async Task<Unit> Handle(
@@ -38,9 +40,13 @@ namespace Social_Network_API.Manipulations.Users.Commands.AddUserAvatar
                         + ".jpg"
                 );
             }
-            var target = await _mediator.Send(new GetUserQuery(request.TargetId));
+            var target = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == request.TargetId, cancellationToken: cancellationToken);
+            if( target == null )
+            {
+                throw new NotFoundException("User", request.TargetId);
+            }
             target.HasAvatar = true;
-            await _mediator.Send(new SaveChangesQuery());
+            await _dbContext.SaveChangesAsync(cancellationToken);         
             return Unit.Value;
         }
     }

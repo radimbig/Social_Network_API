@@ -14,7 +14,7 @@ namespace Social_Network_API.Manipulations.Users.Commands.CreateUser
             RuleFor(createUserCommand => createUserCommand.Name).NotEmpty().NotNull().MinimumLength(4).MaximumLength(15);
             RuleFor(createUserCommand => createUserCommand.Password).NotEmpty().NotNull().MinimumLength(8).MaximumLength(30);
             RuleFor(createUserCommand => createUserCommand.Email).NotEmpty().NotNull().EmailAddress();
-            RuleFor(createUserCommand => createUserCommand.Age).NotNull().NotEmpty().InclusiveBetween(18, 100);
+            
         }
     }
 }

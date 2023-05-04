@@ -15,7 +15,6 @@ namespace Social_Network_API.Manipulations.Users.Commands.CreateUser
         public CreateUserCommand(UserRegister user)
         {
             Name = user.Name;
-            Age = user.Age;
             Email = user.Email;
             Password = user.Password;
         }

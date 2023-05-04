@@ -23,7 +23,7 @@ namespace Social_Network_API.Manipulations.Subscriptions.Queries.GetFriends
             List<UserVm> result = new List<UserVm>();
             for (int i = 0; i < subscriptions.Following.Count; i++)
             {
-                if (subscriptions.Followers.Any(u => u.Email == subscriptions.Following[i].Email))
+                if (subscriptions.Followers.Any(u => u.Id == subscriptions.Following[i].Id))
                 {
                     result.Add(subscriptions.Following[i]);
                 }

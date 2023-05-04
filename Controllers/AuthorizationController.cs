@@ -49,7 +49,6 @@ namespace Social_Network_API.Controllers
                 new CreateUserCommand()
                 {
                     Name = user.Name,
-                    Age = user.Age,
                     Email = user.Email,
                     Password = user.Password
                 }
