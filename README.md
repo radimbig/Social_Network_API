@@ -25,7 +25,4 @@ Subscriptions ✔️\
 Static files ✔️\
 Avatar uploading ✔️\
 Entity framework ✔️\
-Posts ❌\
-Comments ❌\
-Profiles ❌\
-Messages ❌
+
