@@ -24,5 +24,5 @@ Login/Register ✔️\
 Subscriptions ✔️\
 Static files ✔️\
 Avatar uploading ✔️\
-Entity framework ✔️\
+Entity framework ✔️
 
