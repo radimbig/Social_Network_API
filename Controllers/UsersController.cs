@@ -2,7 +2,7 @@
 using Social_Network_API.Entities;
 
 using Microsoft.AspNetCore.Http;
-using Social_Network_API.Models;
+using Social_Network_API.Tools;
 using Social_Network_API.Database;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;

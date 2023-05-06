@@ -1,6 +1,6 @@
 ﻿using ImageMagick;
 
-namespace Social_Network_API.Models
+namespace Social_Network_API.Tools
 {
     public class ImageValidator
     {

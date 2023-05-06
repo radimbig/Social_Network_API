@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Social_Network_API.Models;
+using Social_Network_API.Tools;
 
 namespace Social_Network_API.Manipulations.Users.Commands.AddUserAvatar
 {
