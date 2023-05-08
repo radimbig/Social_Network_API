@@ -25,4 +25,10 @@ Subscriptions ✔️\
 Static files ✔️\
 Avatar uploading ✔️\
 Entity framework ✔️
-
+## Used technologies 🖥️
+FluentValidation\
+MediatR\
+Entity Framework\
+MySQL Database\
+Magick.Net\
+JWT-Authorization
