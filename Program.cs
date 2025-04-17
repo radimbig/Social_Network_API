@@ -27,8 +27,7 @@ namespace Social_Network_API
             builder.Services.AddControllers();
 
             // YOUR CONNECTION STRING FOR DB
-            string connectionString =
-                "server=localhost;user=root;password=root;database=societydb;port=3306";
+            string connectionString = config.GetValue<string>("connectionString");
 
             builder.Services.AddAuthorization();
             builder.Services.AddAuthentication();
