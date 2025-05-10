@@ -8,13 +8,17 @@ namespace Social_Network_API.Database
     public class MyDBContext : DbContext
     {
         public MyDBContext(DbContextOptions<MyDBContext> options)
-            : base(options) { }
+            : base(options) {
+
+            Console.WriteLine(Database.EnsureCreated());
+        }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>().ToTable("users");
             modelBuilder.Entity<User>().HasKey(x => x.Id);
             modelBuilder.Entity<User>(e => e.Property(o => o.Name).HasColumnType("VARCHAR(50)"));
             modelBuilder.Entity<User>(e => e.Property(o => o.Email).HasColumnType("VARCHAR(320)"));
@@ -57,7 +61,7 @@ namespace Social_Network_API.Database
                 .WithOne(s => s.Follower)
                 .HasForeignKey(u => u.FollowerId)
                 .OnDelete(DeleteBehavior.Cascade);
-
+            modelBuilder.Entity<Subscription>().ToTable("subscriptions");
             modelBuilder.Entity<Subscription>().HasKey(x => x.Id);
             modelBuilder.Entity<Subscription>().ToTable("subscriptions");
             modelBuilder
