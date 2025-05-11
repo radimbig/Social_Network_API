@@ -34,7 +34,6 @@ namespace Social_Network_API
             builder.Services.AddSingleton(config);
             builder.Services.AddDbContext<MyDBContext>(
                 options => options.UseMySQL(connectionString)
-
             );
             ;
             builder.Services
@@ -85,6 +84,7 @@ namespace Social_Network_API
             app.MapControllers();
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader());
 
+            
             
             app.Run();
         }
